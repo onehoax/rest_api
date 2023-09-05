@@ -1,25 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Dialect } from "sequelize";
-import { Sequelize } from "sequelize-typescript";
-import { Task } from "../model/task.js";
-import "dotenv/config";
+import { Logger } from "winston";
+import { MyLogger } from "../utils/logger.js";
+import { PrismaClient } from "@prisma/client";
 
-function connect(): Sequelize {
-    const hostName: string = process.env["HOST"]!;
-    const userName: string = process.env["USR"]!;
-    const password: string = process.env["PASSWORD"]!;
-    const database: string = process.env["DB"]!;
-    const dialect: Dialect = <Dialect>process.env["DIALECT"]!;
+const logger: Logger = MyLogger.getInstance().getLogger();
 
-    const sequelize = new Sequelize(database, userName, password, {
-        host: hostName,
-        dialect: dialect
-        // repositoryMode: true,
-    });
+const prisma = new PrismaClient();
 
-    sequelize.addModels([Task]);
+async function main() {
+    // await prisma.tasks.create({
+    //     data: {
+    //         name: "Andres Osorio",
+    //         created_by: "Andres"
+    //     }
+    // });
 
-    return sequelize;
+    const allPeople = await prisma.people.findMany();
+    console.log(allPeople);
+    const allTasks = await prisma.tasks.findMany();
+    console.log(allTasks);
+
+    // const post = await prisma.tasks.update({
+    //     where: { id: 1 },
+    //     data: { description: "Some random task" }
+    // });
+    // console.log(post);
 }
 
-export { connect };
+main()
+    .then(async () => {
+        await prisma.$disconnect();
+    })
+    .catch(async (e) => {
+        logger.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    });
