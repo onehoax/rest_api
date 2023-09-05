@@ -1,6 +1,0 @@
-{"level":"info","message":"ENV: prod","timestamp":"2023.09.04-19:08"}
-{"level":"warn","message":"ENV: prod","timestamp":"2023.09.04-19:08"}
-{"level":"error","message":"ENV: prod","timestamp":"2023.09.04-19:08"}
-{"level":"info","message":"TaskRepository","timestamp":"2023.09.04-19:31"}
-{"level":"warn","message":"TaskRepository","timestamp":"2023.09.04-19:31"}
-{"level":"error","message":"TaskRepository","timestamp":"2023.09.04-19:31"}

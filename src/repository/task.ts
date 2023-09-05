@@ -8,7 +8,7 @@ class TaskRepository {
     private logger: Logger;
 
     constructor() {
-        const myLogger: MyLogger = new MyLogger();
+        const myLogger: MyLogger = MyLogger.getInstance();
         this.logger = myLogger.getLogger();
 
         this.logger.info(`${TaskRepository.name}`);
