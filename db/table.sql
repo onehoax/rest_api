@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS people, tasks;
+
 CREATE TABLE people (
    person_id    INT GENERATED ALWAYS AS IDENTITY,
    name         VARCHAR(20) NOT NULL,
@@ -11,6 +13,7 @@ CREATE TABLE tasks (
    person_id    INT NOT NULL,
    name         VARCHAR(50) NOT NULL,
    description  VARCHAR(100),
+   created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY(task_id),
    CONSTRAINT fk_person
       FOREIGN KEY(person_id)
@@ -18,18 +21,3 @@ CREATE TABLE tasks (
 			ON UPDATE CASCADE
 			ON DELETE CASCADE
 );
-
-INSERT INTO people
-(name)
-VALUES 
-('Carlos'),
-('Andres')
-;
-
-INSERT INTO tasks
-(person_id, name)
-VALUES 
-(1, 'Mop'),
-(1, 'Dishes'),
-(2, 'Dust')
-;

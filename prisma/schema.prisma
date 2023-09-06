@@ -8,11 +8,12 @@ datasource db {
 }
 
 model tasks {
-  task_id     Int     @id @default(autoincrement())
+  task_id     Int      @id @default(autoincrement())
   person_id   Int
-  name        String  @db.VarChar(50)
-  description String? @db.VarChar(100)
-  people      people  @relation(fields: [person_id], references: [person_id], onDelete: Cascade, map: "fk_person")
+  name        String   @db.VarChar(50)
+  description String?  @db.VarChar(100)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  people      people   @relation(fields: [person_id], references: [person_id], onDelete: Cascade, map: "fk_person")
 }
 
 model people {
