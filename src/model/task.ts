@@ -1,3 +1,6 @@
+/**
+ * Person record in DB
+ */
 type Person = {
     person_id: number;
     name: string;
@@ -5,6 +8,9 @@ type Person = {
     phone?: string | null;
 };
 
+/**
+ * Task record in DB
+ */
 type Task = {
     task_id: number;
     person_id: number;

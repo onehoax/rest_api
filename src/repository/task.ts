@@ -1,49 +1,56 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Logger } from "winston";
 import { MyLogger } from "../utils/logger.js";
-import { PrismaClient } from "@prisma/client";
-import { Person, Task } from "../model/task.js";
+import { MyError } from "../utils/error.js";
+import { Person } from "../model/task.js";
+import { CRUD } from "./crud.js";
+import { Prisma, client } from "./prismaClient.js";
 
 const __filename: string = fileURLToPath(import.meta.url);
-
-const baseError: string = `In FILE: ${__filename}, in FUNCTION:`;
-
 const logger: Logger = MyLogger.getInstance().getLogger();
 
-const prisma = new PrismaClient();
+class PersonRepository implements CRUD<Person> {
+    async getAll(): Promise<Person[]> {
+        try {
+            return await client.people.findMany();
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                logger.error(MyError.baseLog(__filename, this.getAll.name, e.code, e.message));
+                // const codeMsg: [number, string] = MyError.prismaError(e.code, e.message);
+                // throw new MyError(codeMsg[1], codeMsg[0]);
+                throw e;
+            } else {
+                logger.error("DB connection error");
+                throw new MyError("coudln't connect to DB", 500);
+            }
+        }
+    }
 
-// await prisma.tasks.create({
-//     data: {
-//         name: "Andres Osorio",
-//         created_by: "Andres"
-//     }
-// });
-
-// const post = await prisma.tasks.update({
-//     where: { id: 1 },
-//     data: { description: "Some random task" }
-// });
-// console.log(post);
-
-async function getAllPeople(): Promise<Person[]> {
-    try {
-        return await prisma.people.findMany();
-    } catch (e) {
-        logger.error(`${baseError} ${getAllPeople.name}: ${e}`);
-        throw e;
+    getOne(): Promise<Person> {
+        throw new Error("Method not implemented.");
+    }
+    createAll(entries: Person[]): Promise<Person[]> {
+        throw new Error("Method not implemented.");
+    }
+    createOne(entry: Person): Promise<Person> {
+        throw new Error("Method not implemented.");
+    }
+    updateAll(entries: Person[]): Promise<Person[]> {
+        throw new Error("Method not implemented.");
+    }
+    updateOne(entry: Person): Promise<Person> {
+        throw new Error("Method not implemented.");
+    }
+    deleteAll(entries: Person[]): Promise<Person[]> {
+        throw new Error("Method not implemented.");
+    }
+    deleteOne(entry: Person[]): Promise<Person> {
+        throw new Error("Method not implemented.");
     }
 }
 
-async function getAllTasks(): Promise<Task[]> {
-    try {
-        return await prisma.tasks.findMany();
-    } catch (e) {
-        logger.error(`${baseError} ${getAllTasks.name}: ${e}`);
-        throw e;
-    }
-}
+const m = new PersonRepository();
+m.getAll().then((r) => console.log(r));
 
-getAllPeople().then((p) => console.log(p));
-getAllTasks().then((t) => console.log(t));
+export { PersonRepository };
