@@ -22,7 +22,7 @@ interface CRUD<T> {
      * @param email - Email of user
      * @returns The T record from the table of T with name and email combination
      */
-    findOne(name: string, email: string): Promise<T>;
+    findOne(name: string, email: string): Promise<T | null>;
 
     /**
      * Retrieve all T records from the table of T
@@ -36,7 +36,7 @@ interface CRUD<T> {
      * @param email - Email of user
      * @returns The updated T object, null otherwise
      */
-    updateOne(name: string, email: string): Promise<boolean>;
+    updateOne(name: string, email: string, entry: T): Promise<boolean>;
 
     /**
      * Delete the T record from the table of T with given name and email combination

@@ -1,5 +1,3 @@
-import { Prisma } from "../repository/prismaClient.js";
-
 /**
  * ============================== Custom Error ==============================
  */
@@ -22,9 +20,16 @@ class MyError extends Error {
  * ============================== Log and Error Utils ==============================
  */
 
+import { Prisma } from "../repository/prismaClient.js";
+
 const dbServerError: string = "DB SERVER CONNECTION ERROR";
 const dbQueryError: string = "DB QUERY ERROR";
 const dbUnknownError: string = "DB UNKNOWN ERROR";
+const unableToInsert: string = "DB UNABLE TO INSERT RECORD";
+const unableToFind: string = "DB UNABLE TO FIND RECORD";
+const unableToUpdate: string = "DB UNABLE TO UPDATE RECORD";
+const unableToDelete: string = "DB UNABLE TO DELETE RECORD";
+const resourceExists: string = "DB RESOURCE ALREADY EXISTS";
 const prismaUnknownAbsentCode: string = "P-1";
 
 /**
@@ -35,20 +40,20 @@ const prismaUnknownAbsentCode: string = "P-1";
  * @param errorMessage - Error message
  * @returns Generic log message identifying the file and function in which it originated
  */
-function baseLog(file: string, func: string, source?: string, code?: string): string {
-    return `In FILE: ${file} - In FUNCTION: ${func} - SOURCE: ${source} - CODE: ${code}`;
+function baseLog(file: string, func: string, source?: string): string {
+    return `In FILE: ${file} - In FUNCTION: ${func} - SOURCE: ${source}`;
 }
 
 /**
  * Generate a custom error based on error from another source
- * @param generalError - A general translation from original error
+ * @param translatedError - A general translation from original error
  * @param errorSource - Source of the error
  * @param errorCode - Error code
  * @param errorMsg - Error message
  * @returns A combination of all of the parameters for the function
  */
-function produceErrorMsg(generalError: string, errorSource: string, errorCode: string, errorMsg: string): string {
-    return `${generalError} <> ${errorSource} errorCode: ${errorCode} <> ${errorSource} errorMessage: ${errorMsg}`;
+function customErrorMsg(translatedError: string, errorSource: string, errorCode: string, errorMsg: string): string {
+    return `${translatedError} <> ${errorSource} errorCode: ${errorCode} <> ${errorSource} errorMessage: ${errorMsg}`;
 }
 
 /**
@@ -61,31 +66,34 @@ function produceErrorMsg(generalError: string, errorSource: string, errorCode: s
 function translatePrismaError(erroCode: string, errorMessage: string): [number, string] {
     const code: number = parseInt(erroCode.substring(1));
 
-    if (code >= 1000 && code <= 1017) return [500, produceErrorMsg(dbServerError, "Prisma", erroCode, errorMessage)];
-    else if (code >= 2000 && code <= 2034)
-        return [404, produceErrorMsg(dbQueryError, "Prisma", erroCode, errorMessage)];
-    else return [500, produceErrorMsg(dbUnknownError, "Prisma", erroCode, errorMessage)];
+    if (code >= 1000 && code <= 1017) return [500, customErrorMsg(dbServerError, "Prisma", erroCode, errorMessage)];
+    else if (code >= 2000 && code <= 2034) return [404, customErrorMsg(dbQueryError, "Prisma", erroCode, errorMessage)];
+    else return [500, customErrorMsg(dbUnknownError, "Prisma", erroCode, errorMessage)];
 }
 
-function handlePrismaError(
-    e:
-        | Prisma.PrismaClientKnownRequestError
-        | Prisma.PrismaClientUnknownRequestError
-        | Prisma.PrismaClientRustPanicError
-        | Prisma.PrismaClientInitializationError
-        | Prisma.PrismaClientValidationError
-): string {
+function handleRepositoryError(e: unknown): MyError {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const errorCodeAndMsg: [number, string] = translatePrismaError(e.code, e.message);
-        throw new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
+        return new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
     } else if (e instanceof Prisma.PrismaClientInitializationError) {
         const code: string = e.errorCode ? e.errorCode : prismaUnknownAbsentCode; // Use "P-1" if errorCode not present
         const errorCodeAndMsg: [number, string] = translatePrismaError(code, e.message);
-        throw new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
+        return new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
+    } else if (e instanceof MyError) {
+        return e;
     } else {
-        const errorCodeAndMsg: [number, string] = translatePrismaError(prismaUnknownAbsentCode, e.message);
-        throw new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
+        const errorCodeAndMsg: [number, string] = translatePrismaError(prismaUnknownAbsentCode, dbUnknownError);
+        return new MyError(errorCodeAndMsg[0], errorCodeAndMsg[1]);
     }
 }
 
-export { MyError, baseLog, handlePrismaError };
+export {
+    MyError,
+    baseLog,
+    handleRepositoryError,
+    unableToInsert,
+    unableToFind,
+    unableToUpdate,
+    unableToDelete,
+    resourceExists
+};

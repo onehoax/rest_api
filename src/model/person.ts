@@ -4,7 +4,7 @@
 type Person = {
     person_id?: number;
     name: string;
-    email: string | null;
+    email: string;
     phone?: string | null;
 };
 

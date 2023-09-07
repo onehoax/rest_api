@@ -5,7 +5,7 @@ type Task = {
     task_id?: number;
     person_id: number;
     name: string;
-    description?: string | null;
+    description?: string;
     created_at?: Date;
 };
 
