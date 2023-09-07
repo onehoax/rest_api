@@ -9,7 +9,7 @@
         "./dist"
     ],
     "scripts": {
-        "start": "tsc && node ./dist/controller/person.js",
+        "start": "tsc && node ./dist/utils/error.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "nodemon --watch ./src --ext ts --exec ts-node-esm ./src/index.ts",
         "tsc": "tsc",

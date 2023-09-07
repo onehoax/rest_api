@@ -3,61 +3,46 @@
  */
 interface CRUD<T> {
     /**
-     * Retrieve all T records from the table of T
-     * @returns All T records from the table of T as a T[]
+     * Create a new T record in the table of T
+     * @param entry - T object to be inserted
+     * @returns The T record inserted, null if operation doesn't succeed
      */
-    getAll(): Promise<T[]>;
-
-    /**
-     * Retrieve the T record from the table of T people with id
-     * @returns The T record from the table of T with id
-     */
-    getOne(id: number): Promise<T | null>;
+    createOne(entry: T): Promise<boolean>;
 
     /**
      * Create a batch of new T records in the table of T
      * @param entries - T objects to be inserted
-     * @returns All the T records inserted as T[], an empty array if operations doesn't succeed
+     * @returns All the T records inserted as T[], an empty array if operation doesn't succeed
      */
-    createAll(entries: T[]): Promise<T[]>;
+    createMany(entries: T[]): Promise<number>;
 
     /**
-     * Create a new T record in the table of T
-     * @param entry - T object to be inserted
-     * @returns The T record inserted, null if operations doesn't succeed
+     * Retrieve the T record from the table of T with given name and email combination
+     * @param name - Name of user
+     * @param email - Email of user
+     * @returns The T record from the table of T with name and email combination
      */
-    createOne(entry: T): Promise<T | null>;
+    findOne(name: string, email: string): Promise<T>;
 
     /**
-     * Batch update existing T records in the table of T
-     * @param filterId - Where filterId =
-     * @param filter - Where filterId = filter
-     * @param newValId - Set newValId =
-     * @param newVal - Set newValId = newVal
-     * @returns The number of records updated
+     * Retrieve all T records from the table of T
+     * @returns All T records from the table of T as a T[]
      */
-    updateAll(filterId: string, filter: string | number, newValId: string, newVal: string | number): Promise<number>;
+    findAll(): Promise<T[]>;
 
     /**
-     * Update an existing T record in the table of T
-     * @param entry - T object to be updated
+     * Update an existing T record in the table of T with given name and email combination
+     * @param name - Name of user
+     * @param email - Email of user
      * @returns The updated T object, null otherwise
      */
-    updateOne(entry: T): Promise<T | null>;
+    updateOne(name: string, email: string): Promise<boolean>;
 
     /**
-     *
-     * @param filterId - Where filterId =
-     * @param filter - Where filterId = filter
-     * @returns The number of records deleted
+     * Delete the T record from the table of T with given name and email combination
+     * @returns The T record from the table of T with given name and email combination
      */
-    deleteAll(filterId: string, filter: string | number): Promise<number>;
-
-    /**
-     * Delete the T record from the table of T people with id
-     * @returns The T record from the table of T with id
-     */
-    deleteOne(id: number): Promise<T>;
+    deleteOne(name: string, email: string): Promise<boolean>;
 }
 
 export { CRUD };

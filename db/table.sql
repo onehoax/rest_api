@@ -3,9 +3,10 @@ DROP TABLE IF EXISTS people, tasks;
 CREATE TABLE people (
    person_id    INT GENERATED ALWAYS AS IDENTITY,
    name         VARCHAR(20) NOT NULL,
-   email        VARCHAR(20), 
+   email        VARCHAR(20) NOT NULL, 
    phone        VARCHAR(20),
-   PRIMARY KEY(person_id)
+      PRIMARY KEY(person_id),
+      UNIQUE (name, email)
 );
 
 CREATE TABLE tasks (
@@ -14,10 +15,9 @@ CREATE TABLE tasks (
    name         VARCHAR(50) NOT NULL,
    description  VARCHAR(100),
    created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY(task_id),
-   CONSTRAINT fk_person
+      PRIMARY KEY(task_id),
       FOREIGN KEY(person_id)
-		REFERENCES people(person_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
+         REFERENCES people(person_id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
 );
