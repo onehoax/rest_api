@@ -22,7 +22,7 @@ function produceErrorMsg(generalError: string, prismaCode: string, prismaMsg: st
 class MyError extends Error {
     errorCode: number;
 
-    constructor(message: string, errorCode: number) {
+    constructor(errorCode: number, message: string) {
         super(message);
         this.errorCode = errorCode;
     }
@@ -35,8 +35,8 @@ class MyError extends Error {
      * @param errorMessage - Error message
      * @returns Generic log message identifying the file and function in which it originated
      */
-    static baseLog(file: string, func: string, errorCode: string, errorMessage: string): string {
-        return `In FILE: ${file} - In FUNCTION: ${func}: ${errorCode} - ${errorMessage}`;
+    static baseLog(file: string, func: string, source?: string, code?: string): string {
+        return `In FILE: ${file} - In FUNCTION: ${func} - SOURCE: ${source} - CODE: ${code}`;
     }
 
     /**
@@ -54,4 +54,4 @@ class MyError extends Error {
     }
 }
 
-export { MyError };
+export { MyError, dbServerError };
