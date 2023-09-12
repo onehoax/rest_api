@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * ============================== Custom Error ==============================
  */
@@ -21,6 +22,7 @@ class MyError extends Error {
  */
 
 import { Prisma } from "../repository/prismaClient.js";
+import { NextFunction, Request, Response } from "express";
 
 const dbServerError: string = "DB SERVER CONNECTION ERROR";
 const dbQueryError: string = "DB QUERY ERROR";
@@ -30,6 +32,7 @@ const unableToFind: string = "DB UNABLE TO FIND RECORD";
 const unableToUpdate: string = "DB UNABLE TO UPDATE RECORD";
 const unableToDelete: string = "DB UNABLE TO DELETE RECORD";
 const resourceExists: string = "DB RESOURCE ALREADY EXISTS";
+const invalidRequest: string = "INVALID REQUEST";
 const prismaUnknownAbsentCode: string = "P-1";
 
 /**
@@ -87,13 +90,26 @@ function handleRepositoryError(e: unknown): MyError {
     }
 }
 
+function handleTopLevelError(e: MyError, _req: Request, res: Response, next: NextFunction): void {
+    console.log(e.errorCode);
+    console.log(e.message);
+
+    res.status(e.errorCode).json({
+        status: "ERROR",
+        statusCode: e.errorCode,
+        message: e.message
+    });
+}
+
 export {
     MyError,
     baseLog,
     handleRepositoryError,
+    handleTopLevelError,
     unableToInsert,
     unableToFind,
     unableToUpdate,
     unableToDelete,
-    resourceExists
+    resourceExists,
+    invalidRequest
 };

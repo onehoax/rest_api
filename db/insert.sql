@@ -1,14 +1,14 @@
 INSERT INTO people
 (name)
 VALUES 
-('Carlos'),
-('Andres')
+('Carlos', 'carlos@email.com'),
+('Andres', 'andres@email.com')
 ;
 
 INSERT INTO tasks
 (person_id, name)
 VALUES 
-(1, 'Mop'),
-(1, 'Dishes'),
-(2, 'Dust')
+(4, 'Mop'),
+(12, 'Dishes'),
+(12, 'Dust')
 ;
